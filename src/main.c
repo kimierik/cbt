@@ -112,7 +112,7 @@ char* _collapseVecIntoString(Config *conf){
     char* arguments= malloc(sizeof(char*)*conf->totalStringSize);
 
     for(int i=0;i<conf->FILES_TO_COMPILE.size;i++){
-        strcat(arguments, *(char**)(conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i)));
+        strcat(arguments, **(char***)(conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i)));
         strcat(arguments, " ");
     }
     //printf("%s\n",arguments);
@@ -120,13 +120,13 @@ char* _collapseVecIntoString(Config *conf){
 
     for(int i=0;i<conf->LIBRARIES.size;i++){
         strcat(arguments, "-l");
-        strcat(arguments, *(char**)(conf->LIBRARIES.elements+(conf->LIBRARIES.elemSize*i)));
+        strcat(arguments, **(char***)(conf->LIBRARIES.elements+(conf->LIBRARIES.elemSize*i)));
         strcat(arguments, " ");
     }
     //printf("%s\n",arguments);
 
     for(int i=0;i<conf->ARGUMENTS.size;i++){
-        strcat(arguments, *(char**)(conf->ARGUMENTS.elements+(conf->ARGUMENTS.elemSize*i)));
+        strcat(arguments, **(char***)(conf->ARGUMENTS.elements+(conf->ARGUMENTS.elemSize*i)));
         strcat(arguments, " ");
     }
     //printf("%s\n",arguments);

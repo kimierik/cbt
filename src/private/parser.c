@@ -47,18 +47,22 @@ int GetSigId(char* string){
     return 0;
 }
 
-void freeStringPointer(char**elem){
+void freeStringPointer(char*** elem){
+
+    //printf("freeing %s %p: %p\n",**elem,**elem,*elem);
+    free(**elem);
+    //printf("done elem\n");
     free(*elem);
-    free(elem);
+    //printf("done\n");
 }
 
 
 
 void freeConfigVectors(Config *conf){
 
+    destroyPointerVector(&conf->FILES_TO_COMPILE,  (void(*)(void*))&freeStringPointer);
     destroyPointerVector(&conf->ARGUMENTS,  (void(*)(void*))&freeStringPointer);
     destroyPointerVector(&conf->LIBRARIES,  (void(*)(void*))&freeStringPointer);
-    destroyPointerVector(&conf->FILES_TO_COMPILE,  (void(*)(void*))&freeStringPointer);
 }
 
 //assumes string is NOT allocated on the heap
@@ -73,12 +77,16 @@ void __addToCompileList(Config *conf, char *string){
     conf->totalStringSize+=stlen+1; //add strings size to total string size (+1 is for whitespace)
 
     // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
+
     char** strptr=malloc(sizeof(char*));
+    printf("%p is %s stris:%p\n",strptr, str,str);
+    //something scetchy is happen
     *strptr=str;
+    //but something work so something right is happen also
     
     
     //push it on to the vector
-    pushVector(&conf->FILES_TO_COMPILE, strptr);
+    pushVector(&conf->FILES_TO_COMPILE, &strptr);
 
 }
 
@@ -97,7 +105,7 @@ void __addToLibraryList(Config *conf, char *string){
     
     
     //push it on to the vector
-    pushVector(&conf->LIBRARIES, strptr);
+    pushVector(&conf->LIBRARIES, &strptr);
 
 }
 
@@ -116,7 +124,7 @@ void __addToArgumentList(Config *conf, char *string){
     
     
     //push it on to the vector
-    pushVector(&conf->ARGUMENTS, strptr);
+    pushVector(&conf->ARGUMENTS, &strptr);
 
 }
 

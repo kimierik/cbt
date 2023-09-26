@@ -54,6 +54,34 @@ void _IncreaseVectorCap(struct Vector* stack){
 
 
 
+void* indexAtVector(Vector *vec,int i){
+    //printf("attempting to index :%i \n",i);
+    void* a= vec->elements + i*vec->elemSize;
+    //printf("retrieved :%i=%c\n",a,a);
+    return a;
+}
+
+
+
+//insert at position
+void insertAtVector(Vector*vec,int index ,void* elem){
+    //insert element at index
+    //see if we need to increse capasity
+    if (vec->size == vec->capasity){
+        //inclrease stackcap
+        _IncreaseVectorCap(vec);
+    }
+
+    //move all elements from index onward by one 
+    //this needs to start at the latest element so we dont override anything by accident
+    for(int i=vec->size-1; i>=0;i--){
+        memcpy( (vec->elements+(vec->elemSize*i)) , (vec->elements+(vec->elemSize*i+1)), vec->elemSize );
+    }
+    memcpy(vec->elements+vec->elemSize*index, elem,vec->elemSize);
+}
+
+
+
 void pushVector(Vector* stack, void*elem){
 
     if (stack->size == stack->capasity){
@@ -90,7 +118,7 @@ void destroyPointerVector(Vector *stack, void(*ElementCleaningFunction)(void *) 
         void** tok=((void**)(stack->elements+(i*stack->elemSize)));
 
         //free the stored element with the given function
-        (*ElementCleaningFunction)(*tok);
+        (*ElementCleaningFunction)(tok);
     }
 
     destroyVector(stack);

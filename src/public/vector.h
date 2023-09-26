@@ -25,6 +25,11 @@ void pushVector(Vector* stack, void*elem);
 //pop
 void * popVector(Vector *stack);
 
+void* indexAtVector(Vector *vec,int i);
+
+void insertAtVector(Vector*vec,int index ,void* elem);
+
+
 /*
  * print stack information
  * */
