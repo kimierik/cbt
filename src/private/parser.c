@@ -20,7 +20,8 @@
 //make conf
 Config MakeConfig(){
     struct Config conf;
-    conf.compileListSize=0;
+    conf.totalStringSize=0;
+    conf.FILES_TO_COMPILE=makeVector(sizeof(char**));
     strcpy(conf.FILENAME, "a.out");
     return conf;
 }
@@ -41,9 +42,30 @@ int GetSigId(char* string){
 }
 
 
-//uhhh
+//assumes string is NOT allocated on the heap
+//this function allocates string on the heap with malloc
 void __addToStrList(Config *conf, char *string){
-    strcpy(conf->FILES_TO_COMPILE[conf->compileListSize++], string);
+    //strcpy(conf->FILES_TO_COMPILE[conf->compileListSize++], string);
+    //add to the vector
+
+    //allocate string on the heap
+    //do we need to allocate a pointer to the string aswell?
+    //i think we do
+    
+    int stlen= strlen(string);
+    char*str= malloc( sizeof(char*) * stlen );
+    strcpy(str, string);
+
+    conf->totalStringSize+=stlen+1; //add strings size to total string size (+1 is for whitespace)
+
+    // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
+    char**strptr=malloc(sizeof(char*));
+    *strptr=str;
+    
+    
+    //push it on to the vector
+    pushVector(&conf->FILES_TO_COMPILE, strptr);
+
 }
 
 

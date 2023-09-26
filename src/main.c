@@ -77,32 +77,49 @@ void handleInit(){
     //if so do nothing rn
     //else make config file
 
+    //todo populate the conf file dont just make an empty one
     system("touch cbt.conf");
 }
 
+
+
+//makes a vector of char*'s int o a single char*
+//the char* is mallocced and the caller must take care of it
+char* _collapseVecIntoString(Config *conf){
+    //we probably add all the things (libs, other args etc) into a single large string
+
+    //the size of the arguments 
+    //conf->totalStringSize + ....
+    
+    char* arguments= malloc(sizeof(char*)*conf->totalStringSize);
+
+    for(int i=0;i<conf->FILES_TO_COMPILE.size;i++){
+        strcat(arguments, *(char**)conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i));
+        strcat(arguments, " ");
+    }
+
+
+    return arguments;
+}
+
+
 //reads config file and builds the project
 void handleBuild(){
-    //read config file
-    //we need some fns to parse the config propperly
 
     Config conf =MakeConfig();
     parseConfig(&conf);
-    printf("-o %s\n",conf.FILENAME);
+    //printf("-o %s\n",conf.FILENAME);
 
-    char compilefilesString[100];
-    for(int i=0;i<conf.compileListSize;i++){
-        strcat(compilefilesString, conf.FILES_TO_COMPILE[i]);
-        strcat(compilefilesString, " ");
-    }
+    char* arguments = _collapseVecIntoString(&conf);
 
-    char commandbuff[10000];
+    u32 commandsize=conf.totalStringSize+strlen(conf.FILENAME)+16; //16 is "gcc main.c...."
+    char commandbuff[commandsize];
 
-    snprintf(commandbuff, 10000,"gcc main.c -o %s %s",conf.FILENAME,compilefilesString); 
-    //printf("%s\n",commandbuff);
+    snprintf(commandbuff, commandsize,"gcc main.c -o %s %s",conf.FILENAME,arguments); 
+    printf("%s\n",commandbuff);
 
-    //todo support multiple comlipers
+    //call the built system command
     system(commandbuff);
-
 }
 
 //calls handle build then runs the program

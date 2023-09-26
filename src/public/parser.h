@@ -3,6 +3,7 @@
 
 
 #include "../utils/macros.h"
+#include "./vector.h"
 
 //TODO 
 //make FILES_TO_COMPILE into vector
@@ -12,8 +13,8 @@ typedef struct Config{
 
     char FILENAME[32];
 
-    char FILES_TO_COMPILE[32][32];
-    u8 compileListSize;
+    Vector FILES_TO_COMPILE; //vec of char**
+    u32 totalStringSize; //size of all the strings in the vector combined
 
 
 }Config;
