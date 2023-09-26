@@ -4,11 +4,23 @@
 #include <string.h>
 #include <stdlib.h>
 #include "./public/parser.h"
+#include "public/vector.h"
 
 void handleInit();
 void handleBuild();
 void handleRun();
 void handleCreate();
+
+
+//TODO
+
+//run           needs to know the filename to run
+//add           needs to be able to add text to the file in an appropriate position
+//create        depends on add
+
+//init          write something to the file and not just touch it 
+//new           make multiple dirs and then call init in it basically
+
 
 
 
@@ -60,6 +72,11 @@ int main (int argc, char ** argv){
             return 0;
         }
 
+        if (!strcmp(argv[arg],"run")){
+            handleRun();
+            return 0;
+        }
+
 
 
         printf("no command found for '%s' use --help or -h for instructions\n",argv[arg]);
@@ -83,6 +100,7 @@ void handleInit(){
 
 
 
+//i dont know where this function should be in
 //makes a vector of char*'s int o a single char*
 //the char* is mallocced and the caller must take care of it
 char* _collapseVecIntoString(Config *conf){
@@ -138,10 +156,23 @@ void handleBuild(){
     
     //TODO CLEAR EVERYTHING IN CONFIG VECTORS 
     //rn the program dies after this is done so we dont really need to worry about anythign
+    freeConfigVectors(&conf);
 }
 
 //calls handle build then runs the program
-void handleRun(){}
+void handleRun(){
+    handleBuild();
+
+    //we parse the file 2 times in a row 
+    //this can be optimized
+    //expecially since we dont free anything from build rn
+    Config conf =MakeConfig();
+    parseConfig(&conf);
+
+    //this is blocking idk if we should let cbt die before calling but idk if it matters tbh
+    system(conf.FILENAME);
+    freeConfigVectors(&conf);
+}
 
 //creates file and adds it to the config file
 void handleCreate(){}

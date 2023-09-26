@@ -47,6 +47,19 @@ int GetSigId(char* string){
     return 0;
 }
 
+void freeStringPointer(char**elem){
+    free(*elem);
+    free(elem);
+}
+
+
+
+void freeConfigVectors(Config *conf){
+
+    destroyPointerVector(&conf->ARGUMENTS,  (void(*)(void*))&freeStringPointer);
+    destroyPointerVector(&conf->LIBRARIES,  (void(*)(void*))&freeStringPointer);
+    destroyPointerVector(&conf->FILES_TO_COMPILE,  (void(*)(void*))&freeStringPointer);
+}
 
 //assumes string is NOT allocated on the heap
 //this function allocates string on the heap with malloc

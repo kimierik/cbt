@@ -26,6 +26,7 @@ typedef struct Config{
 }Config;
 
 
+void freeConfigVectors(Config *conf);
 
 void parseConfig(Config* conf);
 Config MakeConfig();
