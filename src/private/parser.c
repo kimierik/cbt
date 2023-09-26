@@ -23,8 +23,10 @@ Config MakeConfig(){
     conf.totalStringSize=0;
     conf.FILES_TO_COMPILE= makeVector(sizeof(char**));
     conf.LIBRARIES=        makeVector(sizeof(char**));
+    conf.ARGUMENTS=        makeVector(sizeof(char**));
     strcpy(conf.FILENAME, "a.out");
     strcpy(conf.ENTRYPOINT, "main.c");
+    strcpy(conf.COMPILER, "g++");
     return conf;
 }
 
@@ -34,9 +36,9 @@ Config MakeConfig(){
 //returns the index of the signifier from the list
 //returns 0 if is not sig
 int GetSigId(char* string){
-    char* keywords[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]"};
-    //printf("sigs size is %lu",sizeof(signifiers));
+    char* keywords[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]","[ARGUMENTS]","[COMPILER]"};
     int size=sizeof(keywords)/sizeof(keywords[0]);
+    //printf("sigs size is %i",size);
     for (int i=0;i<size;i++) {
         if (strcmp(keywords[i], string)==0) {
             return i+1;
@@ -83,6 +85,25 @@ void __addToLibraryList(Config *conf, char *string){
     
     //push it on to the vector
     pushVector(&conf->LIBRARIES, strptr);
+
+}
+
+void __addToArgumentList(Config *conf, char *string){
+    
+    int stlen= strlen(string);
+    //allocate string on the heap
+    char*str= malloc( sizeof(char*) * stlen );
+    strcpy(str, string);
+
+    conf->totalStringSize+=stlen+1; //add strings size to total string size (+1 is for whitespace)
+
+    // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
+    char** strptr=malloc(sizeof(char*));
+    *strptr=str;
+    
+    
+    //push it on to the vector
+    pushVector(&conf->ARGUMENTS, strptr);
 
 }
 
@@ -148,6 +169,17 @@ void parseConfig(Config* conf){
                 //[ENTRYPOINT] (aka main.c or main.cpp etc)
                 if(keywordId==4){
                     strcpy(conf->ENTRYPOINT, unvalidatedString);
+                }
+
+                //[ARGUMENTS]
+                if(keywordId==5){
+                    //printf("adding filename %s\n",unvalidatedString);
+                    __addToArgumentList(conf, unvalidatedString);
+                }
+
+                //[COMPILER] (aka main.c or main.cpp etc)
+                if(keywordId==6){
+                    strcpy(conf->COMPILER, unvalidatedString);
                 }
 
 

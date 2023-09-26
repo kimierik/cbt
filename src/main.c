@@ -97,12 +97,21 @@ char* _collapseVecIntoString(Config *conf){
         strcat(arguments, *(char**)(conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i)));
         strcat(arguments, " ");
     }
+    //printf("%s\n",arguments);
+
 
     for(int i=0;i<conf->LIBRARIES.size;i++){
         strcat(arguments, "-l");
         strcat(arguments, *(char**)(conf->LIBRARIES.elements+(conf->LIBRARIES.elemSize*i)));
         strcat(arguments, " ");
     }
+    //printf("%s\n",arguments);
+
+    for(int i=0;i<conf->ARGUMENTS.size;i++){
+        strcat(arguments, *(char**)(conf->ARGUMENTS.elements+(conf->ARGUMENTS.elemSize*i)));
+        strcat(arguments, " ");
+    }
+    //printf("%s\n",arguments);
 
 
     return arguments;
@@ -121,7 +130,7 @@ void handleBuild(){
     u32 commandsize=conf.totalStringSize+strlen(conf.FILENAME)+strlen(conf.ENTRYPOINT)+16; //16 is "gcc main.c...."
     char commandbuff[commandsize];
 
-    snprintf(commandbuff, commandsize,"g++ %s -o %s %s",conf.ENTRYPOINT,conf.FILENAME,arguments); 
+    snprintf(commandbuff, commandsize,"%s %s -o %s %s",conf.COMPILER,conf.ENTRYPOINT,conf.FILENAME,arguments); 
     printf("%s\n",commandbuff);
 
     //call the built system command
