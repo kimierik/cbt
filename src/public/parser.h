@@ -12,10 +12,12 @@
 typedef struct Config{
 
     char FILENAME[32];
+    char ENTRYPOINT[32];
 
     Vector FILES_TO_COMPILE; //vec of char**
     u32 totalStringSize; //size of all the strings in the vector combined
 
+    Vector LIBRARIES; //vec of char**
 
 }Config;
 

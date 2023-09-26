@@ -21,8 +21,10 @@
 Config MakeConfig(){
     struct Config conf;
     conf.totalStringSize=0;
-    conf.FILES_TO_COMPILE=makeVector(sizeof(char**));
+    conf.FILES_TO_COMPILE= makeVector(sizeof(char**));
+    conf.LIBRARIES=        makeVector(sizeof(char**));
     strcpy(conf.FILENAME, "a.out");
+    strcpy(conf.ENTRYPOINT, "main.c");
     return conf;
 }
 
@@ -32,8 +34,10 @@ Config MakeConfig(){
 //returns the index of the signifier from the list
 //returns 0 if is not sig
 int GetSigId(char* string){
-    char* signifiers[]= {"[FILENAME]","[FILES_TO_COMPILE]"};
-    for (int i=0;i<2;i++) {
+    char* signifiers[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]"};
+    //printf("sigs size is %lu",sizeof(signifiers));
+    //TODO MAKE THIS MAGIC NUMBER IN LOOP DISSAPEAR
+    for (int i=0;i<4;i++) {
         if (strcmp(signifiers[i], string)==0) {
             return i+1;
         }
@@ -44,22 +48,17 @@ int GetSigId(char* string){
 
 //assumes string is NOT allocated on the heap
 //this function allocates string on the heap with malloc
-void __addToStrList(Config *conf, char *string){
-    //strcpy(conf->FILES_TO_COMPILE[conf->compileListSize++], string);
-    //add to the vector
-
-    //allocate string on the heap
-    //do we need to allocate a pointer to the string aswell?
-    //i think we do
+void __addToCompileList(Config *conf, char *string){
     
     int stlen= strlen(string);
+    //allocate string on the heap
     char*str= malloc( sizeof(char*) * stlen );
     strcpy(str, string);
 
     conf->totalStringSize+=stlen+1; //add strings size to total string size (+1 is for whitespace)
 
     // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
-    char**strptr=malloc(sizeof(char*));
+    char** strptr=malloc(sizeof(char*));
     *strptr=str;
     
     
@@ -68,6 +67,24 @@ void __addToStrList(Config *conf, char *string){
 
 }
 
+void __addToLibraryList(Config *conf, char *string){
+    
+    int stlen= strlen(string);
+    //allocate string on the heap
+    char*str= malloc( sizeof(char*) * stlen );
+    strcpy(str, string);
+
+    conf->totalStringSize+=stlen+3; //add strings size to total string size (+3 is for whitespace+"-l")
+
+    // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
+    char**strptr=malloc(sizeof(char*));
+    *strptr=str;
+    
+    
+    //push it on to the vector
+    pushVector(&conf->LIBRARIES, strptr);
+
+}
 
 
 
@@ -111,13 +128,26 @@ void parseConfig(Config* conf){
                 //not signifier
                 //
                 //assign the string to the approipriate thing
+                //[FILENAME]
                 if(sigId==1){
                     strcpy(conf->FILENAME, unvalidatedString);
                     //printf("assign filename %s\n",unvalidatedString);
                 }
 
+                //[FILES_TO_COMPILE]
                 if(sigId==2){
-                    __addToStrList(conf, unvalidatedString);
+                    printf("adding filename %s\n",unvalidatedString);
+                    __addToCompileList(conf, unvalidatedString);
+                }
+
+                //[LIBRARIES]
+                if(sigId==3){
+                    __addToLibraryList(conf, unvalidatedString);
+                }
+
+                //[ENTRYPOINT] (aka main.c or main.cpp etc)
+                if(sigId==4){
+                    strcpy(conf->ENTRYPOINT, unvalidatedString);
                 }
 
 

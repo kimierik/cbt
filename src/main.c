@@ -89,14 +89,23 @@ char* _collapseVecIntoString(Config *conf){
     //we probably add all the things (libs, other args etc) into a single large string
 
     //the size of the arguments 
-    //conf->totalStringSize + ....
+    //conf->totalStringSize + ...
     
     char* arguments= malloc(sizeof(char*)*conf->totalStringSize);
 
+    printf("files size:%i\n libs size:%i\n",conf->FILES_TO_COMPILE.size,conf->LIBRARIES.size);
     for(int i=0;i<conf->FILES_TO_COMPILE.size;i++){
-        strcat(arguments, *(char**)conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i));
+        strcat(arguments, *(char**)(conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i)));
         strcat(arguments, " ");
     }
+    printf("files: %s\n",arguments);
+
+    for(int i=0;i<conf->LIBRARIES.size;i++){
+        strcat(arguments, "-l");
+        strcat(arguments, *(char**)(conf->LIBRARIES.elements+(conf->LIBRARIES.elemSize*i)));
+        strcat(arguments, " ");
+    }
+    printf("all: %s\n",arguments);
 
 
     return arguments;
@@ -112,14 +121,17 @@ void handleBuild(){
 
     char* arguments = _collapseVecIntoString(&conf);
 
-    u32 commandsize=conf.totalStringSize+strlen(conf.FILENAME)+16; //16 is "gcc main.c...."
+    u32 commandsize=conf.totalStringSize+strlen(conf.FILENAME)+strlen(conf.ENTRYPOINT)+16; //16 is "gcc main.c...."
     char commandbuff[commandsize];
 
-    snprintf(commandbuff, commandsize,"gcc main.c -o %s %s",conf.FILENAME,arguments); 
+    snprintf(commandbuff, commandsize,"g++ %s -o %s %s",conf.ENTRYPOINT,conf.FILENAME,arguments); 
     printf("%s\n",commandbuff);
 
     //call the built system command
     system(commandbuff);
+    
+    //TODO CLEAR EVERYTHING IN CONFIG VECTORS 
+    //rn the program dies after this is done so we dont really need to worry about anythign
 }
 
 //calls handle build then runs the program
