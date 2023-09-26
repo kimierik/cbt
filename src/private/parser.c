@@ -34,11 +34,11 @@ Config MakeConfig(){
 //returns the index of the signifier from the list
 //returns 0 if is not sig
 int GetSigId(char* string){
-    char* signifiers[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]"};
+    char* keywords[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]"};
     //printf("sigs size is %lu",sizeof(signifiers));
-    //TODO MAKE THIS MAGIC NUMBER IN LOOP DISSAPEAR
-    for (int i=0;i<4;i++) {
-        if (strcmp(signifiers[i], string)==0) {
+    int size=sizeof(keywords)/sizeof(keywords[0]);
+    for (int i=0;i<size;i++) {
+        if (strcmp(keywords[i], string)==0) {
             return i+1;
         }
     }
@@ -113,7 +113,7 @@ void parseConfig(Config* conf){
     u8 charpointer=0;// this is the index at the end of unvalidatedStrin
                      // aka this will be the len of unvalidatedStrin
 
-    int sigId=0;
+    int keywordId=0;
     int TempSigId=0;
 
 
@@ -129,32 +129,31 @@ void parseConfig(Config* conf){
                 //
                 //assign the string to the approipriate thing
                 //[FILENAME]
-                if(sigId==1){
+                if(keywordId==1){
                     strcpy(conf->FILENAME, unvalidatedString);
                     //printf("assign filename %s\n",unvalidatedString);
                 }
 
                 //[FILES_TO_COMPILE]
-                if(sigId==2){
-                    printf("adding filename %s\n",unvalidatedString);
+                if(keywordId==2){
+                    //printf("adding filename %s\n",unvalidatedString);
                     __addToCompileList(conf, unvalidatedString);
                 }
 
                 //[LIBRARIES]
-                if(sigId==3){
+                if(keywordId==3){
                     __addToLibraryList(conf, unvalidatedString);
                 }
 
                 //[ENTRYPOINT] (aka main.c or main.cpp etc)
-                if(sigId==4){
+                if(keywordId==4){
                     strcpy(conf->ENTRYPOINT, unvalidatedString);
                 }
 
 
 
             }else{
-                sigId=TempSigId;
-                //printf("sigId:%i\n",sigId);
+                keywordId=TempSigId;
             }
 
         }else{

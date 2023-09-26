@@ -93,19 +93,16 @@ char* _collapseVecIntoString(Config *conf){
     
     char* arguments= malloc(sizeof(char*)*conf->totalStringSize);
 
-    printf("files size:%i\n libs size:%i\n",conf->FILES_TO_COMPILE.size,conf->LIBRARIES.size);
     for(int i=0;i<conf->FILES_TO_COMPILE.size;i++){
         strcat(arguments, *(char**)(conf->FILES_TO_COMPILE.elements+(conf->FILES_TO_COMPILE.elemSize*i)));
         strcat(arguments, " ");
     }
-    printf("files: %s\n",arguments);
 
     for(int i=0;i<conf->LIBRARIES.size;i++){
         strcat(arguments, "-l");
         strcat(arguments, *(char**)(conf->LIBRARIES.elements+(conf->LIBRARIES.elemSize*i)));
         strcat(arguments, " ");
     }
-    printf("all: %s\n",arguments);
 
 
     return arguments;
