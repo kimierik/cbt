@@ -74,10 +74,11 @@ void insertAtVector(Vector*vec,int index ,void* elem){
 
     //move all elements from index onward by one 
     //this needs to start at the latest element so we dont override anything by accident
-    for(int i=vec->size-1; i>=0;i--){
-        memcpy( (vec->elements+(vec->elemSize*i)) , (vec->elements+(vec->elemSize*i+1)), vec->elemSize );
+    for(int i=vec->size-1; i>=index+1;i--){
+        memcpy( (vec->elements+(vec->elemSize*(i+1))) , (vec->elements+(vec->elemSize*i)), vec->elemSize );
     }
-    memcpy(vec->elements+vec->elemSize*index, elem,vec->elemSize);
+    memcpy(vec->elements+vec->elemSize*(index+1), elem,vec->elemSize);
+    vec->size++;
 }
 
 
