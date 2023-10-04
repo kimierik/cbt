@@ -7,7 +7,7 @@
 #include "public/vector.h"
 
 void handleInit();
-void handleBuild();
+int handleBuild();
 void handleRun();
 void handleCreate(char* filename);
 void handleAdd(char* filename);
@@ -15,9 +15,6 @@ void handleAdd(char* filename);
 
 //TODO
 
-//run           needs to know the filename to run
-//add           needs to be able to add text to the file in an appropriate position
-//create        depends on add
 
 //init          write something to the file and not just touch it 
 //new           make multiple dirs and then call init in it basically
@@ -55,9 +52,9 @@ int main (int argc, char ** argv){
     }
 
     //we need to loop through it and see if the command is appropriate
-    printf("%i\n",argc);
+    //printf("%i\n",argc);
     for(int arg=1;arg<argc;arg++){
-        printf("%s \n",argv[arg] );
+        //printf("%s \n",argv[arg] );
 
         if (!strcmp(argv[arg],"--help") || !strcmp(argv[arg],"-h")){
             printHelp();
@@ -149,7 +146,7 @@ char* _collapseVecIntoString(Config *conf){
 
 
 //reads config file and builds the project
-void handleBuild(){
+int handleBuild(){
 
     Config conf =MakeConfig();
     parseConfig(&conf);
@@ -164,26 +161,35 @@ void handleBuild(){
     printf("%s\n",commandbuff);
 
     //call the built system command
-    system(commandbuff);
+    int returnvalue = system(commandbuff);
     
     //TODO CLEAR EVERYTHING IN CONFIG VECTORS 
     //rn the program dies after this is done so we dont really need to worry about anythign
     freeConfigVectors(&conf);
+    return returnvalue;
 }
 
 //calls handle build then runs the program
 void handleRun(){
-    handleBuild();
+    int exitcode=handleBuild();
 
-    //we parse the file 2 times in a row 
-    //this can be optimized
-    //expecially since we dont free anything from build rn
-    Config conf =MakeConfig();
-    parseConfig(&conf);
+    if (exitcode==0) {
+        //we parse the file 2 times in a row 
+        //this can be optimized
+        //expecially since we dont free anything from build rn
+        Config conf =MakeConfig();
+        parseConfig(&conf);
 
-    //this is blocking idk if we should let cbt die before calling but idk if it matters tbh
-    system(conf.FILENAME);
-    freeConfigVectors(&conf);
+        //this is blocking idk if we should let cbt die before calling but idk if it matters tbh
+        int ret=system(conf.FILENAME);
+        if (ret==139){
+            printf("Segmentation Fault\n");
+        }
+        freeConfigVectors(&conf);
+    } else {
+        printf("\nerror building program did not run\n");
+    }
+
 }
 
 
@@ -273,6 +279,7 @@ void handleAdd(char* filename){
     fclose(fptr);
     fptr=fopen("cbt.conf", "w");
     fputs(buffer, fptr);
+    destroyPointerVector(&fileLines, (void(*)(void*))&freeStringPointer);
 
 }
 

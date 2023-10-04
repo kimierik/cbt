@@ -79,7 +79,7 @@ void __addToCompileList(Config *conf, char *string){
     // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
 
     char** strptr=malloc(sizeof(char*));
-    printf("%p is %s stris:%p\n",strptr, str,str);
+    //printf("%p is %s stris:%p\n",strptr, str,str);
     //something scetchy is happen
     *strptr=str;
     //but something work so something right is happen also

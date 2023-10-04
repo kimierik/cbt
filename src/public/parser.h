@@ -28,6 +28,9 @@ typedef struct Config{
 
 void freeConfigVectors(Config *conf);
 
+//frees string ***
+void freeStringPointer(char*** elem);
+
 void parseConfig(Config* conf);
 Config MakeConfig();
 
