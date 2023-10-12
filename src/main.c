@@ -13,7 +13,7 @@
 #include "public/vector.h"
 
 void handleInit();
-void handleCreate(char* filename);
+void handleCreate(char** filenames,int filecount);
 
 
 //TODO
@@ -85,7 +85,7 @@ int main (int argc, char ** argv){
         }
         if (!strcmp(argv[arg],"create")){
             //todo pass all arguments so we can add other things not just files to compile
-            handleCreate(argv[arg+1]);
+            handleCreate(argv,argc);
             return 0;
         }
 
@@ -113,18 +113,53 @@ void handleInit(){
 
 
 
+//todo change filename into all arguments passed
 
 //creates file and adds it to the config file
-void handleCreate(char*filename){
-    int len=strlen(filename)+10;
-    char buffer[len];
-    snprintf(buffer, len, "touch %s", filename);
-    system(buffer);
-    //this would make .cpp.h withc is not what i want but i gotta figure it out later
-    snprintf(buffer, len, "touch %s.h", filename);
-    system(buffer);
+void handleCreate(char**filenames,int filecount){
+    //loop filenames
+    //i is 2 to skip programname and create arguments
+    for (int i=2; i<filecount; i++) {
+        char* filename= filenames[i];
 
-    handleAdd(filename);
+        //find what extention the files are by looping and finding the '.'
+        
+        //where the filename ends and the file extention starts
+        int startOfExtention=0;
+        //go through all chars in filename to find '.'
+        
+        for(int j=0; j<strlen(filename);j++){
+            if(filename[j]=='.'){
+                startOfExtention=j;
+                break;
+            }
+        }
+
+        //if we do not find an extention in the filename
+        if (startOfExtention==0){
+            printf("no extention found for file: %s \n",filename);
+            exit(1);
+        }
+
+        // then make the files according
+
+        int len=strlen(filename)+10;
+        char buffer[len];
+        snprintf(buffer, len, "touch %s", filename);
+        //printf("%s\n",buffer);
+        system(buffer);
+
+
+
+        //we need to take 0..startOfExtention of filename and add .h to the end
+        snprintf(buffer, len, "touch %.*s.h",startOfExtention, filename);
+        //printf("%s\n",buffer);
+        system(buffer);
+
+        handleAdd(filename);
+    
+    }
+
 }
 
 

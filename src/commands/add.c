@@ -11,6 +11,7 @@
 #include "../public/parser.h"
 
 
+//adds filename into the [FILES_TO_COMPILE] section of the config
 void handleAdd(char* filename){
     //read the entire file into the vec line by line
 
@@ -61,9 +62,15 @@ void handleAdd(char* filename){
     for (int i=0; i<fileLines.size; i++) {
         //printf("is %s\n",**(char***)(fileLines.elements+(i*fileLines.elemSize)) );
         if ( strcmp( **(char***)(fileLines.elements+(i*fileLines.elemSize)) ,"[FILES_TO_COMPILE]" )==0 ){
-            //filename is not allocated so that might lead to issues when destroying the vector
+
             char**strptri=malloc(sizeof(char**));
-            *strptri=filename;
+
+            //scuffed implementation HACK
+            //we are allocating filename on the heap so we dont crash when we deallocate evetyhing that is on the vector
+            char*str= malloc( sizeof(char*) * strlen(filename));
+            strcpy(str, filename);
+            *strptri=str;
+
             insertAtVector(&fileLines, i, &strptri);
             //printf("%i\n",i);
             break;
@@ -88,12 +95,16 @@ void handleAdd(char* filename){
 
         strcat(buffer, "\n");
     }
-    //printf("file is now\n%s\n",buffer);
+    //printf("\nfile is now\n%s\n",buffer);
 
     //then overwrite the config with the string
     fclose(fptr);
+    //printf("closed file\n");
     fptr=fopen("cbt.conf", "w");
+    //printf("opwned fopr writing\n");
     fputs(buffer, fptr);
+    //printf("wrote to file, destroying vec\n");
+    
     destroyPointerVector(&fileLines, (void(*)(void*))&freeStringPointer);
 
 }
