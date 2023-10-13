@@ -1,7 +1,7 @@
 #ifndef INITCOMMAND
 #define INITCOMMAND
 
-//calls handle build then runs the program
+//makes a config file
 void handleInit();
 
 #endif
