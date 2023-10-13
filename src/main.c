@@ -3,6 +3,7 @@
 #include "./commands/build.h"
 #include "./commands/run.h"
 #include "./commands/add.h"
+#include "./commands/init.h"
 
 
 
@@ -12,17 +13,11 @@
 #include "./public/parser.h"
 #include "public/vector.h"
 
-void handleInit();
 void handleCreate(char** filenames,int filecount);
 
 
 //TODO
-
-
-//init          write something to the file and not just touch it 
 //new           make multiple dirs and then call init in it basically
-
-
 
 
 
@@ -100,15 +95,6 @@ int main (int argc, char ** argv){
 }
 
 
-//makes a config file
-void handleInit(){
-    //check if we allready have a config file
-    //if so do nothing rn
-    //else make config file
-
-    //todo populate the conf file dont just make an empty one
-    system("touch cbt.conf");
-}
 
 
 
