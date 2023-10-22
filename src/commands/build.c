@@ -56,32 +56,6 @@ char* _collapseVecIntoString(Config *conf){
     return arguments;
 }
 
-//copied from parser
-//this fn should probably be in the config .h and c
-void __addsToCompileList(Config *conf, char *string){
-    
-    int stlen= strlen(string);
-    //allocate string on the heap
-    char*str= malloc( sizeof(char*) * stlen );
-    strcpy(str, string);
-
-    conf->totalStringSize+=stlen+1; //add strings size to total string size (+1 is for whitespace)
-
-    // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
-
-    char** strptr=malloc(sizeof(char*));
-    //printf("%p is %s stris:%p\n",strptr, str,str);
-    //something scetchy is happen
-    *strptr=str;
-    //but something work so something right is happen also
-    
-    
-    //push it on to the vector
-    pushVector(&conf->FILES_TO_COMPILE, &strptr);
-
-}
-
-
 
 void __readCbtIniFile(const char* path, Config* conf){
 
@@ -125,7 +99,7 @@ void __readCbtIniFile(const char* path, Config* conf){
             //we also need to prefix the string with the given path
             strcat(fullFilePath, unvalidatedString);
             
-            __addsToCompileList(conf, fullFilePath);
+            __addToCompileList(conf, fullFilePath);
             strsize=0;
         }else{
             unvalidatedString[strsize++]=buffer[0];

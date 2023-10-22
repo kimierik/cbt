@@ -36,7 +36,23 @@ void parseConfig(Config* conf);
 Config MakeConfig();
 
 //assumes the input string is null terminated
+
 void __addToStrList(Config*conf, char*string);
+
+// add a filename to be compiled
+void __addToCompileList(Config *conf, char *string);
+
+//add an argument 
+void __addToArgumentList(Config *conf, char *string);
+
+//add a library 
+void __addToLibraryList(Config *conf, char *string);
+
+//add a Cbt library 
+void __addToCBTLibList(Config* conf, char*string);
+
+
+
 //wait how the fuck did i imagine this going
 //this has to be some memory violation how do we just append strings to somethign with undefines size
 //do we just malloc it bigger just implement a vector 
