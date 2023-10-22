@@ -23,6 +23,7 @@ Config MakeConfig(){
     conf.totalStringSize=0;
     conf.FILES_TO_COMPILE= makeVector(sizeof(char**));
     conf.LIBRARIES=        makeVector(sizeof(char**));
+    conf.CBTLIBRARIES=        makeVector(sizeof(char**));
     conf.ARGUMENTS=        makeVector(sizeof(char**));
     strcpy(conf.FILENAME, "a.out");
     strcpy(conf.ENTRYPOINT, "main.c");
@@ -36,7 +37,7 @@ Config MakeConfig(){
 //returns the index of the signifier from the list
 //returns 0 if is not sig
 int GetSigId(char* string){
-    char* keywords[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]","[ARGUMENTS]","[COMPILER]"};
+    char* keywords[]= {"[FILENAME]","[FILES_TO_COMPILE]","[LIBRARIES]","[ENTRYPOINT]","[ARGUMENTS]","[COMPILER]","[CBTLIBS]"};
     int size=sizeof(keywords)/sizeof(keywords[0]);
     //printf("sigs size is %i",size);
     for (int i=0;i<size;i++) {
@@ -63,6 +64,7 @@ void freeConfigVectors(Config *conf){
     destroyPointerVector(&conf->FILES_TO_COMPILE,  (void(*)(void*))&freeStringPointer);
     destroyPointerVector(&conf->ARGUMENTS,  (void(*)(void*))&freeStringPointer);
     destroyPointerVector(&conf->LIBRARIES,  (void(*)(void*))&freeStringPointer);
+    destroyPointerVector(&conf->CBTLIBRARIES,  (void(*)(void*))&freeStringPointer);
 }
 
 //assumes string is NOT allocated on the heap
@@ -128,6 +130,28 @@ void __addToArgumentList(Config *conf, char *string){
 
 }
 
+void __addToCBTLibList(Config* conf, char*string){
+
+    int stlen= strlen(string);
+    //allocate string on the heap
+    char*str= malloc( sizeof(char*) * stlen );
+    strcpy(str, string);
+
+    // adds -Istring to size
+    conf->totalStringSize+=stlen+3; //add strings size to total string size -I size
+
+    // vector is a list of pointers. so we need to make a pointer to the string. we cannot place strings on the vector
+
+    char** strptr=malloc(sizeof(char*));
+    //printf("%p is %s stris:%p\n",strptr, str,str);
+    //something scetchy is happen
+    *strptr=str;
+    //but something work so something right is happen also
+    
+    
+    //push it on to the vector
+    pushVector(&conf->CBTLIBRARIES, &strptr);
+}
 
 
 
@@ -198,9 +222,14 @@ void parseConfig(Config* conf){
                     __addToArgumentList(conf, unvalidatedString);
                 }
 
-                //[COMPILER] (aka main.c or main.cpp etc)
+                //[COMPILER] aka gcc / g++
                 if(keywordId==6){
                     strcpy(conf->COMPILER, unvalidatedString);
+                }
+
+                //[CBTLIBS]  cbt handled libraries 
+                if(keywordId==7){
+                    __addToCBTLibList(conf, unvalidatedString);
                 }
 
 

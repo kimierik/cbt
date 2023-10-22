@@ -19,6 +19,7 @@ typedef struct Config{
     u32 totalStringSize; //size of all the strings in the vector combined
 
     Vector LIBRARIES; //vec of char**
+    Vector CBTLIBRARIES; //vec of char**
 
     Vector ARGUMENTS;
 
