@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "./public/parser.h"
+#include "commands/generate.h"
 #include "public/vector.h"
 
 void handleCreate(char** filenames,int filecount);
@@ -29,6 +30,8 @@ void printHelp(){
     printf("\t create\t makes a file and adds it to the config\n");
     printf("\t build\t builds the project \n");
     printf("\t run\t builds and executes the project \n");
+
+    printf("\t generate\t generates various files (currenly only compile_flags.txt for clang)\n");
 
     printf("\t new\t \n");
 
@@ -70,6 +73,11 @@ int main (int argc, char ** argv){
 
         if (!strcmp(argv[arg],"run")){
             handleRun();
+            return 0;
+        }
+
+        if (!strcmp(argv[arg],"generate")){
+            handleGenerate();
             return 0;
         }
 
