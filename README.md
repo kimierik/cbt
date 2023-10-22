@@ -41,7 +41,7 @@ the cbt.conf file has 6 keywords
 
 ## cbt libs
 cbt libs is a library management system for this tool.  
-a simple example of how it works can be found (here)[https://github.com/kimierik/cbt/tree/main/example/cbtlibs]
+a simple example of how it works can be found [here](https://github.com/kimierik/cbt/tree/main/example/cbtlibs)
 
 
 ## TODO/WORK IN PROGRESS
